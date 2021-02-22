@@ -20,6 +20,7 @@ class App extends Component {
     }
 
     preparingMicrophone = () => {
+        if (!this.state.stream) return;
         this.recorder = new MediaRecorder(this.state.stream);
         this.recorder.addEventListener("dataavailable", this.onDataAvailable);
         this.recorder.addEventListener("stop", this.onStop);
@@ -73,6 +74,7 @@ class App extends Component {
     };
 
     render() {
+        console.log(this.state.stream && !this.state.microphone);
         if (this.state.stream && !this.state.microphone) this.preparingMicrophone();
         const audios = this.createAudios(this.state.sounds);
         return (
