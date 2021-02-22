@@ -7,17 +7,23 @@ class App extends Component {
         soundBytes: [],
         sounds: [],
         index: null,
+        stream: null,
+        microphone: false,
     };
 
     componentDidMount() {
+        navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+            this.setState({ stream });
+        });
+
         this.preparingMicrophone();
     }
 
-    preparingMicrophone = async () => {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        this.recorder = new MediaRecorder(stream);
+    preparingMicrophone = () => {
+        this.recorder = new MediaRecorder(this.state.stream);
         this.recorder.addEventListener("dataavailable", this.onDataAvailable);
         this.recorder.addEventListener("stop", this.onStop);
+        this.setState({ microphone: true });
     };
 
     onStop = ({ data }) => {
@@ -67,6 +73,7 @@ class App extends Component {
     };
 
     render() {
+        if (this.state.stream && !this.state.microphone) this.preparingMicrophone();
         const audios = this.createAudios(this.state.sounds);
         return (
             <div>
