@@ -34,11 +34,13 @@ class App extends Component {
         const sound = new Audio(url);
         const sounds = [...this.state.sounds, sound];
         soundBytes = [];
+        alert(data);
         this.setState({ sounds, soundBytes });
     };
 
     onDataAvailable = ({ data }) => {
         const soundBytes = [...this.state.soundBytes, data];
+        alert(data);
         this.setState({ soundBytes });
     };
 
