@@ -74,19 +74,25 @@ class App extends Component {
     };
 
     render() {
-        console.log(this.state.stream && !this.state.microphone);
-        if (this.state.stream && !this.state.microphone) this.preparingMicrophone();
-        const audios = this.createAudios(this.state.sounds);
-        return (
-            <div>
-                <button onClick={this.recordAudio}>{this.recorder?.state === "recording" ? "Stop" : "Start"}</button>
-                {audios}
-                {this.state.index}
-                <button onClick={this.playAudio} disabled={this.state.index === null}>
-                    {this.state.index !== null ? `Play ${this.state.index}` : "Select Sound"}
-                </button>
-            </div>
-        );
+        try {
+            console.log(this.state.stream && !this.state.microphone);
+            if (this.state.stream && !this.state.microphone) this.preparingMicrophone();
+            const audios = this.createAudios(this.state.sounds);
+            return (
+                <div>
+                    <button onClick={this.recordAudio}>
+                        {this.recorder?.state === "recording" ? "Stop" : "Start"}
+                    </button>
+                    {audios}
+                    {this.state.index}
+                    <button onClick={this.playAudio} disabled={this.state.index === null}>
+                        {this.state.index !== null ? `Play ${this.state.index}` : "Select Sound"}
+                    </button>
+                </div>
+            );
+        } catch (e) {
+            return <div>{e.message}</div>;
+        }
     }
 }
 
