@@ -7,40 +7,31 @@ class App extends Component {
         soundBytes: [],
         sounds: [],
         index: null,
-        stream: null,
-        microphone: false,
     };
 
     componentDidMount() {
-        navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-            this.setState({ stream });
-        });
-
         this.preparingMicrophone();
     }
 
-    preparingMicrophone = () => {
-        if (!this.state.stream) return;
-        this.recorder = new MediaRecorder(this.state.stream);
+    preparingMicrophone = async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        this.recorder = new MediaRecorder(stream);
         this.recorder.addEventListener("dataavailable", this.onDataAvailable);
         this.recorder.addEventListener("stop", this.onStop);
-        this.setState({ microphone: true });
     };
 
     onStop = ({ data }) => {
         let soundBytes = [...this.state.soundBytes, data];
-        const blob = new Blob(soundBytes);
+        const blob = new Blob(soundBytes, { type: "audio/mp4" });
         const url = URL.createObjectURL(blob);
         const sound = new Audio(url);
         const sounds = [...this.state.sounds, sound];
         soundBytes = [];
-        alert(data.size);
         this.setState({ sounds, soundBytes });
     };
 
     onDataAvailable = ({ data }) => {
         const soundBytes = [...this.state.soundBytes, data];
-        alert(data.size);
         this.setState({ soundBytes });
     };
 
@@ -77,8 +68,6 @@ class App extends Component {
 
     render() {
         try {
-            console.log(this.state.stream && !this.state.microphone);
-            if (this.state.stream && !this.state.microphone) this.preparingMicrophone();
             const audios = this.createAudios(this.state.sounds);
             return (
                 <div>
